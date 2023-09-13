@@ -1,130 +1,316 @@
-# myapp
+## Introduction
 
-This project contains source code and supporting files for a serverless application that you can deploy with the SAM CLI. It includes the following files and folders.
+This guide helps the user create a S3 Object Lambda using AWS SAM
+## About SAM
 
-- hello_world - Code for the application's Lambda function.
-- events - Invocation events that you can use to invoke the function.
-- tests - Unit tests for the application code. 
-- template.yaml - A template that defines the application's AWS resources.
+The AWS Serverless Application Model (SAM) is an open-source framework for building serverless applications. It provides shorthand syntax to express functions, APIs, databases, and event source mappings. With just a few lines per resource, you can define the application you want and model it using YAML. During deployment, SAM transforms and expands the SAM syntax into AWS CloudFormation syntax, enabling you to build serverless applications faster.
+## About S3 Object Lambda
 
-The application uses several AWS resources, including Lambda functions and an API Gateway API. These resources are defined in the `template.yaml` file in this project. You can update the template to add AWS resources through the same deployment process that updates your application code.
+With S3 Object Lambda, you can add your own code to S3 GET, HEAD, and LIST requests to modify and process data as it is returned to an application. You can use custom code to modify the data returned by S3 GET requests to filter rows, dynamically resize images, redact confidential data, and much more. You can also use S3 Object Lambda to modify the output of S3 LIST requests to create a custom view of objects in a bucket and S3 HEAD requests to modify object metadata like object name and size. Powered by AWS Lambda functions, your code runs on infrastructure that is fully managed by AWS, eliminating the need to create and store derivative copies of your data or to run expensive proxies, all with no changes required to your applications.
 
-If you prefer to use an integrated development environment (IDE) to build and test your application, you can use the AWS Toolkit.  
-The AWS Toolkit is an open source plug-in for popular IDEs that uses the SAM CLI to build and deploy serverless applications on AWS. The AWS Toolkit also adds a simplified step-through debugging experience for Lambda function code. See the following links to get started.
+## Prerequisites 
 
-* [CLion](https://docs.aws.amazon.com/toolkit-for-jetbrains/latest/userguide/welcome.html)
-* [GoLand](https://docs.aws.amazon.com/toolkit-for-jetbrains/latest/userguide/welcome.html)
-* [IntelliJ](https://docs.aws.amazon.com/toolkit-for-jetbrains/latest/userguide/welcome.html)
-* [WebStorm](https://docs.aws.amazon.com/toolkit-for-jetbrains/latest/userguide/welcome.html)
-* [Rider](https://docs.aws.amazon.com/toolkit-for-jetbrains/latest/userguide/welcome.html)
-* [PhpStorm](https://docs.aws.amazon.com/toolkit-for-jetbrains/latest/userguide/welcome.html)
-* [PyCharm](https://docs.aws.amazon.com/toolkit-for-jetbrains/latest/userguide/welcome.html)
-* [RubyMine](https://docs.aws.amazon.com/toolkit-for-jetbrains/latest/userguide/welcome.html)
-* [DataGrip](https://docs.aws.amazon.com/toolkit-for-jetbrains/latest/userguide/welcome.html)
-* [VS Code](https://docs.aws.amazon.com/toolkit-for-vscode/latest/userguide/welcome.html)
-* [Visual Studio](https://docs.aws.amazon.com/toolkit-for-visual-studio/latest/user-guide/welcome.html)
+1. An AWS Account : If you do not have the account you can create one [here](https://portal.aws.amazon.com/gp/aws/developer/registration/index.html)  and create a IAM user with sufficient permissions to make necessary AWS service calls and manage AWS resources.
+2. Install and configure [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html) 
+3. Install [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
+4. Install and configure [AWS SAM](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-install.html) 
 
-## Deploy the sample application
+## Source Code
+The below written code can be found in the following git repository. If wish you can use this in stead of using the steps below. 
+### Create a SAM template file (template.yaml) 
 
-The Serverless Application Model Command Line Interface (SAM CLI) is an extension of the AWS CLI that adds functionality for building and testing Lambda applications. It uses Docker to run your functions in an Amazon Linux environment that matches Lambda. It can also emulate your application's build environment and API.
+The following is the structure of the SAM template file which will allow you to create an S3 Object Lambda
 
-To use the SAM CLI, you need the following tools.
+You can use a quick start template to create the structure of the template.yaml file by using the following command. 
 
-* SAM CLI - [Install the SAM CLI](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-install.html)
-* [Python 3 installed](https://www.python.org/downloads/)
-* Docker - [Install Docker community edition](https://hub.docker.com/search/?type=edition&offering=community)
-
-To build and deploy your application for the first time, run the following in your shell:
-
-```bash
-sam build --use-container
-sam deploy --guided
+```
+sam init
 ```
 
-The first command will build the source of your application. The second command will package and deploy your application to AWS, with a series of prompts:
-
-* **Stack Name**: The name of the stack to deploy to CloudFormation. This should be unique to your account and region, and a good starting point would be something matching your project name.
-* **AWS Region**: The AWS region you want to deploy your app to.
-* **Confirm changes before deploy**: If set to yes, any change sets will be shown to you before execution for manual review. If set to no, the AWS SAM CLI will automatically deploy application changes.
-* **Allow SAM CLI IAM role creation**: Many AWS SAM templates, including this example, create AWS IAM roles required for the AWS Lambda function(s) included to access AWS services. By default, these are scoped down to minimum required permissions. To deploy an AWS CloudFormation stack which creates or modifies IAM roles, the `CAPABILITY_IAM` value for `capabilities` must be provided. If permission isn't provided through this prompt, to deploy this example you must explicitly pass `--capabilities CAPABILITY_IAM` to the `sam deploy` command.
-* **Save arguments to samconfig.toml**: If set to yes, your choices will be saved to a configuration file inside the project, so that in the future you can just re-run `sam deploy` without parameters to deploy changes to your application.
-
-You can find your API Gateway Endpoint URL in the output values displayed after deployment.
-
-## Use the SAM CLI to build and test locally
-
-Build your application with the `sam build --use-container` command.
-
-```bash
-myapp$ sam build --use-container
 ```
 
-The SAM CLI installs dependencies defined in `hello_world/requirements.txt`, creates a deployment package, and saves it in the `.aws-sam/build` folder.
+You can preselect a particular runtime or package type when using the `sam init` experience.
+Call `sam init --help` to learn more.
 
-Test a single function by invoking it directly with a test event. An event is a JSON document that represents the input that the function receives from the event source. Test events are included in the `events` folder in this project.
+Which template source would you like to use?
+        1 - AWS Quick Start Templates
+        2 - Custom Template Location
+Choice: 1
 
-Run functions locally and invoke them with the `sam local invoke` command.
+Choose an AWS Quick Start application template
+        1 - Hello World Example
+        2 - Data processing
+        3 - Hello World Example with Powertools for AWS Lambda
+        4 - Multi-step workflow
+        5 - Scheduled task
+        .
+        .
+        .
+        
 
-```bash
-myapp$ sam local invoke HelloWorldFunction --event events/event.json
+Template: 1
+
+Use the most popular runtime and package type? (Python and zip) [y/N]: y
+
+Would you like to enable X-Ray tracing on the function(s) in your application?  [y/N]: n
+
+Would you like to enable monitoring using CloudWatch Application Insights?
+For more info, please view https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/cloudwatch-application-insights.html [y/N]: y^?n
+
+Project name [sam-app]: myapp
+
+AWSTemplateFormatVersion: '2010-09-09'  
+Transform: AWS::Serverless-2016-10-31  
+Description: Exmple of creating a S3 Object Lambda with SAM template
 ```
 
-The SAM CLI can also emulate your application's API. Use the `sam local start-api` to run the API locally on port 3000.
+Next change directory to app directory (in my case myapp)
 
-```bash
-myapp$ sam local start-api
-myapp$ curl http://localhost:3000/
+```
+cd myapp
 ```
 
-The SAM CLI reads the application template to determine the API's routes and the functions that they invoke. The `Events` property on each function's definition includes the route and method for each path.
+Under the myapp folder you will see template.yaml
+Use your choice of editor to update this file 
 
-```yaml
-      Events:
-        HelloWorld:
-          Type: Api
-          Properties:
-            Path: /hello
-            Method: get
+#### Create the Resource:  
+
+Create all resources under the resources section: 
+```
+Resources:
 ```
 
-## Add a resource to your application
-The application template uses AWS Serverless Application Model (AWS SAM) to define application resources. AWS SAM is an extension of AWS CloudFormation with a simpler syntax for configuring common serverless application resources such as functions, triggers, and APIs. For resources not included in [the SAM specification](https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md), you can use standard [AWS CloudFormation](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html) resource types.
+Let us start by creating the S3 bucket which is the object is going to be places. Place this under the resource section of the template
 
-## Fetch, tail, and filter Lambda function logs
-
-To simplify troubleshooting, SAM CLI has a command called `sam logs`. `sam logs` lets you fetch logs generated by your deployed Lambda function from the command line. In addition to printing the logs on the terminal, this command has several nifty features to help you quickly find the bug.
-
-`NOTE`: This command works for all AWS Lambda functions; not just the ones you deploy using SAM.
-
-```bash
-myapp$ sam logs -n HelloWorldFunction --stack-name "myapp" --tail
+```
+S3Bucket:  
+  Type: 'AWS::S3::Bucket'  
+  Properties:  
+    BucketEncryption:  
+      ServerSideEncryptionConfiguration:  
+        - ServerSideEncryptionByDefault:  
+            SSEAlgorithm: AES256  
+    PublicAccessBlockConfiguration:  
+      BlockPublicAcls: true  
+      BlockPublicPolicy: true  
+      IgnorePublicAcls: true  
+      RestrictPublicBuckets: true  
+    VersioningConfiguration:  
+      Status: Enabled
 ```
 
-You can find more information and examples about filtering Lambda function logs in the [SAM CLI Documentation](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-logging.html).
+Next we create the S3 Bucket Policy attaching it to the bucket created above. Giving it the ability to access resources in AWS. This is required for the bucket objects to invoke the lambda. 
 
-## Tests
+```
+S3BucketPolicy:  
+  Type: 'AWS::S3::BucketPolicy'  
+  Properties:  
+    Bucket: !Ref S3Bucket  
+    PolicyDocument:  
+      Version: 2012-10-17  
+      Statement:  
+        - Action: '*'  
+          Effect: Allow  
+          Resource:  
+            - !GetAtt S3Bucket.Arn  
+            - !Sub  
+                - '${varS3BucketArn}/*'  
+                - varS3BucketArn: !GetAtt S3Bucket.Arn  
+          Principal:  
+            AWS: '*'  
+          Condition:  
+            StringEquals:  
+              's3:DataAccessPointAccount': !Sub ${AWS::AccountId}
 
-Tests are defined in the `tests` folder in this project. Use PIP to install the test dependencies and run tests.
+```
 
-```bash
-myapp$ pip install -r tests/requirements.txt --user
-# unit test
-myapp$ python -m pytest tests/unit -v
-# integration test, requiring deploying the stack first.
-# Create the env variable AWS_SAM_STACK_NAME with the name of the stack we are testing
-myapp$ AWS_SAM_STACK_NAME="myapp" python -m pytest tests/integration -v
+In the above policy we have allowed the policy to have access to everything in the principal section, however a general best practices of least privilege should apply especially for production workload. 
+
+Next we add the Lambda 
+
+```
+# Lambda function  
+ObjectLambdaFunction:  
+  Type: 'AWS::Serverless::Function'  
+  Properties:  
+    CodeUri: app/  
+    Handler: app.handler  
+    Runtime: python3.11  
+    MemorySize: 1024  
+    # The function needs permission to call back to the S3 Object Lambda Access Point with the WriteGetObjectResponse.  
+    Policies:  
+      - S3CrudPolicy:  
+          BucketName: !Ref S3Bucket  
+      - Statement:  
+        - Effect: Allow  
+          Action: 's3-object-lambda:WriteGetObjectResponse'  
+          Resource: '*'
+```
+
+For the purpose of this example I have created a simple lambda Function that converts CSV file to JSON file. Place this under myapp/app folder as app.py
+
+```
+# S3 Object Lambda to reads CSV and convert it to JSON.  
+import json  
+import csv  
+import boto3  
+import urllib3  
+  
+def handler(event, context):  
+    # Output the event to the logs for debugging  
+    print(event)  
+  
+    #Get Operation Context from event  
+    operation_context = event["getObjectContext"]  
+  
+    # Retrieve the Operation context and the outputRoute, outputToken and inputS3Url from the context  
+    output_route = operation_context["outputRoute"]  
+    output_token = operation_context["outputToken"]  
+    input_s3_url = operation_context["inputS3Url"]  
+    http = urllib3.PoolManager()  
+    response = http.request('GET',  
+                            input_s3_url)  
+  
+    # Get object from S3  
+    original_object = response.data  
+  
+    # Convert the CSV to JSON  
+    json_object = json.dumps(list(csv.DictReader(original_object.decode('utf-8').splitlines())))  
+  
+    print(json_object)  
+    s3 = boto3.client('s3')  
+    s3.write_get_object_response(  
+        Body=json_object,  
+        RequestRoute=output_route,  
+        RequestToken=output_token)  
+  
+    return {  
+        'statusCode': 200,  
+        'body': json.dumps(json_object)  
+        }
+```
+
+Next we add the Access points first the S3 Access Point to the template.yaml file
+```
+# S3 Access Point (Network origin: Internet)  
+S3AccessPoint:  
+  Type: 'AWS::S3::AccessPoint'  
+  Properties:  
+    Bucket: !Ref S3Bucket  
+    Name: 'myapp-ap'
+    
+```
+
+Next we add the the lamba access point 
+
+```
+# S3 Object Lambda Access Point  
+S3ObjectLambdaAccessPoint:  
+  Type: 'AWS::S3ObjectLambda::AccessPoint'  
+  Properties:  
+    Name: 'myapp-olap'  
+    ObjectLambdaConfiguration:  
+        SupportingAccessPoint: !Sub 'arn:aws:s3:${AWS::Region}:${AWS::AccountId}:accesspoint/${S3AccessPoint}'  
+        TransformationConfigurations:  
+        - Actions:  
+            - GetObject  
+          ContentTransformation:  
+            AwsLambda:  
+              FunctionArn: !GetAtt ObjectLambdaFunction.Arn  
+              FunctionPayload: 'test-payload'
+```
+
+Next we create the output section of the template
+
+```
+Outputs:  
+  S3BucketName:  
+    Value: !Ref S3Bucket  
+    Description: S3 Bucket for object storage.  
+  S3AccessPointArn:  
+    Value: !Ref S3AccessPoint  
+    Description: Name of the S3 access point.  
+  S3ObjectLambdaAccessPointArn:  
+    Value: !GetAtt S3ObjectLambdaAccessPoint.Arn  
+    Description: ARN of the S3 Object Lambda access point.  
+  LambdaFunctionArn:  
+    Value: !Ref ObjectLambdaFunction  
+    Description: ObjectLambdaFunction ARN.
+```
+
+sam build
+sam deploy --guided 
+
+The guided sam deployment command will as you a set of configuration before deployment. See below the example of the configuration I have use. You can tweet these according to your setup. 
+
+```                                           
+	sam deploy --guided 
+	Configuring SAM deploy
+	======================
+
+	Looking for config file [samconfig.toml] :  Found
+	Reading default arguments  :  Success
+
+	Setting default arguments for 'sam deploy'
+	=========================================
+	Stack Name [myapp]:
+	AWS Region [eu-west-2]:
+	#Shows you resources changes to be deployed and require a 'Y' to initiate deploy
+	Confirm changes before deploy [Y/n]: y
+	#SAM needs permission to be able to create roles to connect to the resources in your template
+	Allow SAM CLI IAM role creation [Y/n]: y
+	#Preserves the state of previously provisioned resources when an operation fails
+	Disable rollback [y/N]: n
+	Save arguments to configuration file [Y/n]: y
+	SAM configuration file [samconfig.toml]:
+	SAM configuration environment [default]:
+
+	Looking for resources needed for deployment:
+
+```
+
+Once sucessfully deploy you should be able to test the application
+## Test
+
+Let us now test the deployment 
+
+create a test CVS file in the tests folder 
+```
+A,B,C
+1,2,3
+4,5,6
+7,8,9
+```
+
+Upload the file to the S3 bucket
+```
+cd tests
+aws s3 cp test1.csv s3://[your-bucket-name]
+```
+
+
+Now S3 Object Lambda using the access point. The accesspoint arn can be found in the output section of the cloud formation template
+ 
+```
+aws s3api get-object --bucket '[Object Lambda Access point]' --key test1.csv 'test1.json'
+```
+
+The json file is now created in the tests folder
+
+```
+[{"A": "1", "B": "2", "C": "3"}, {"A": "4", "B": "5", "C": "6"}, {"A": "7", "B": "8", "C": "9"}]
 ```
 
 ## Cleanup
 
-To delete the sample application that you created, use the AWS CLI. Assuming you used your project name for the stack name, you can run the following:
+It is important to cleanup the cloud resources you have created so that it does not require any cost associated with it and also as a measure of leaving any insecure implementations around. 
 
-```bash
+To delete the sample application that you created, use the AWS CLI. Assuming you used your project name for the stack name, you can run the following:
+
+```
 sam delete --stack-name "myapp"
 ```
 
-## Resources
+## Source Code
 
-See the [AWS SAM developer guide](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/what-is-sam.html) for an introduction to SAM specification, the SAM CLI, and serverless application concepts.
-
-Next, you can use AWS Serverless Application Repository to deploy ready to use Apps that go beyond hello world samples and learn how authors developed their applications: [AWS Serverless Application Repository main page](https://aws.amazon.com/serverless/serverlessrepo/)
+The source code for the following is available in github
